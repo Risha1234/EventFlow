@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import { useState, useEffect } from 'react';
 import { Download, Filter, XCircle, Calendar, MapPin } from 'lucide-react';
 import { Badge } from '../components/ui';
@@ -13,7 +14,7 @@ export default function RegistrationsPage() {
   const fetchRegistrations = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/registrations/my', {
+      const response = await fetch(`${API_URL}/api/registrations/my`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -31,7 +32,7 @@ export default function RegistrationsPage() {
     if (!window.confirm('Are you sure you want to cancel this registration?')) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/registrations/${id}`, {
+      const response = await fetch(`${API_URL}/api/registrations/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

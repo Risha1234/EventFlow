@@ -1,3 +1,4 @@
+import API_URL from "./api";
 export const trackActivity = async (eventId: number, actionType: 'view' | 'click' | 'register') => {
   try {
     const token = localStorage.getItem('token');
@@ -5,7 +6,7 @@ export const trackActivity = async (eventId: number, actionType: 'view' | 'click
     
     // We do NOT use await when calling this from components to avoid blocking
     // but the function itself can be async.
-    fetch('http://localhost:5000/activity', {
+    fetch(`${API_URL}/activity`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

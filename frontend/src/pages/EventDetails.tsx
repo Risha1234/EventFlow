@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, ArrowLeft, CheckCircle2, Clock, Ticket, CreditCard } from 'lucide-react';
@@ -30,7 +31,7 @@ export default function EventDetails() {
 
   const fetchEventDetails = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}`, {
+      const response = await fetch(`${API_URL}/api/events/${id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -53,10 +54,10 @@ export default function EventDetails() {
     try {
       // Fetch both registrations and bookings
       const [regRes, bookRes] = await Promise.all([
-        fetch('http://localhost:5000/api/registrations/my', {
+        fetch(`${API_URL}/api/registrations/my`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         }),
-        fetch('http://localhost:5000/api/bookings/my', {
+        fetch(`${API_URL}/api/bookings/my`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         })
       ]);
@@ -97,7 +98,7 @@ export default function EventDetails() {
     if (!validateFormResponses()) return;
     setRegistering(true);
     try {
-      const response = await fetch('http://localhost:5000/api/registrations', {
+      const response = await fetch(`${API_URL}/api/registrations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +137,7 @@ export default function EventDetails() {
     }
     setRegistering(true);
     try {
-      const response = await fetch('http://localhost:5000/api/bookings', {
+      const response = await fetch(`${API_URL}/api/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

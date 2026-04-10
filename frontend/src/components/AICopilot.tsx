@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import { useState, useEffect, useRef } from 'react';
 import { X, Send, Loader, Zap } from 'lucide-react';
 
@@ -67,7 +68,7 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/ai/analyze', {
+      const response = await fetch(`${API_URL}/api/ai/analyze`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

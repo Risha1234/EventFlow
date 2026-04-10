@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, MapPin, Users, Mail, Activity, BarChart3, X, Eye } from 'lucide-react';
@@ -53,7 +54,7 @@ export default function OrganizerEventDetails() {
 
   const fetchEventDetails = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}`, {
+      const response = await fetch(`${API_URL}/api/events/${id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -75,7 +76,7 @@ export default function OrganizerEventDetails() {
   const fetchAttendees = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/organizer/events/${id}/attendees`, {
+      const response = await fetch(`${API_URL}/api/organizer/events/${id}/attendees`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -102,7 +103,7 @@ export default function OrganizerEventDetails() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/organizer/events/${id}/analytics`, {
+      const response = await fetch(`${API_URL}/api/organizer/events/${id}/analytics`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

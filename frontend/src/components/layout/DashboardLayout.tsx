@@ -65,7 +65,9 @@ export default function DashboardLayout() {
   useEffect(() => {
     if (!currentUserId) return;
     
-    const socket = io('http://localhost:5000');
+    const socket = io(import.meta.env.VITE_API_URL, {
+      transports: ["websocket", "polling"]
+    });
     
     socket.on("waitlist_promoted", (data) => {
       if (data.userId === currentUserId) {

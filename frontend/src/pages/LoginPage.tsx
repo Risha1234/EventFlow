@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui';
@@ -18,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ export default function LoginPage() {
         if (intent === "host") {
           // User clicked "Start Hosting" - upgrade to organizer
           try {
-            const becomeOrgResponse = await fetch('http://localhost:5000/become-organizer', {
+            const becomeOrgResponse = await fetch(`${API_URL}/become-organizer`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`

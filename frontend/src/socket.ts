@@ -1,8 +1,8 @@
 import { io } from "socket.io-client";
 
-console.log("Connecting to WebSocket server at http://localhost:5000");
+console.log("Connecting to WebSocket server at " + import.meta.env.VITE_API_URL);
 
-export const socket = io("http://localhost:5000", {
+export const socket = io(import.meta.env.VITE_API_URL, {
   reconnection: true,
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000,

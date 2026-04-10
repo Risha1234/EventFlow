@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, MoreVertical, Plus, X, Ticket, DollarSign, Trash2, FormInput, Search, Filter, XCircle, ChevronDown } from 'lucide-react';
@@ -79,7 +80,7 @@ export default function EventsPage() {
 
   const fetchMyRegistrations = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/registrations/my', {
+      const response = await fetch(`${API_URL}/api/registrations/my`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -93,7 +94,7 @@ export default function EventsPage() {
 
   const fetchMyBookings = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/bookings/my', {
+      const response = await fetch(`${API_URL}/api/bookings/my`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -107,7 +108,7 @@ export default function EventsPage() {
 
   const fetchRecommendations = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/events/recommended', {
+      const response = await fetch(`${API_URL}/api/events/recommended`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -128,7 +129,7 @@ export default function EventsPage() {
       if (currentFilters.minPrice) q.append('min_price', currentFilters.minPrice);
       if (currentFilters.maxPrice) q.append('max_price', currentFilters.maxPrice);
 
-      const endpoint = `http://localhost:5000/events${q.toString() ? '?' + q.toString() : ''}`;
+      const endpoint = `${API_URL}/events${q.toString() ? '?' + q.toString() : ''}`;
 
       const response = await fetch(endpoint, {
         headers: {
@@ -144,7 +145,7 @@ export default function EventsPage() {
 
   const fetchTrending = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/events/trending');
+      const response = await fetch(`${API_URL}/api/events/trending`);
       const data = await response.json();
       setTrendingEvents(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -223,7 +224,7 @@ export default function EventsPage() {
           options: f.type === 'select' ? f.options.split(',').map(o => o.trim()).filter(Boolean) : []
         }));
       }
-      const response = await fetch('http://localhost:5000/events', {
+      const response = await fetch(`${API_URL}/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -253,7 +254,7 @@ export default function EventsPage() {
   const handleRegister = async (eventId: number) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/registrations', {
+      const response = await fetch(`${API_URL}/api/registrations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

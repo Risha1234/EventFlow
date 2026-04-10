@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import React, { useState, useEffect } from 'react';
 import { 
   Users, 
@@ -66,8 +67,8 @@ export default function DashboardOverview() {
       const headers = { 'Authorization': `Bearer ${token}` };
       
       const [eventsRes, usersRes] = await Promise.all([
-        fetch('http://localhost:5000/events', { headers }),
-        fetch('http://localhost:5000/users', { headers })
+        fetch(`${API_URL}/events`, { headers }),
+        fetch(`${API_URL}/users`, { headers })
       ]);
       const eventsData = await eventsRes.json();
       const usersData = await usersRes.json();

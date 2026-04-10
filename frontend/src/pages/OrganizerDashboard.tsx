@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Plus, X, LogOut, TrendingUp, Users, Zap, AlertCircle, Sparkles, Ticket, DollarSign, Trash2, FormInput, ChevronDown } from 'lucide-react';
@@ -139,7 +140,7 @@ export default function OrganizerDashboard() {
       const token = localStorage.getItem('token');
       console.log('Fetching organizer events with token:', token?.substring(0, 20) + '...');
 
-      const response = await fetch('http://localhost:5000/api/organizer/events', {
+      const response = await fetch(`${API_URL}/api/organizer/events`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -178,7 +179,7 @@ export default function OrganizerDashboard() {
   };
   const fetchInitialActivity = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/organizer/activity', {
+      const response = await fetch(`${API_URL}/api/organizer/activity`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -216,7 +217,7 @@ export default function OrganizerDashboard() {
   const fetchTrendData = async (eventId: number) => {
     try {
       setTrendLoading(true);
-      const response = await fetch(`http://localhost:5000/api/organizer/event-registrations/${eventId}`, {
+      const response = await fetch(`${API_URL}/api/organizer/event-registrations/${eventId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -234,7 +235,7 @@ export default function OrganizerDashboard() {
 
   const fetchTimeseriesData = async (eventId: number) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/organizer/events/${eventId}/analytics/timeseries`, {
+      const response = await fetch(`${API_URL}/api/organizer/events/${eventId}/analytics/timeseries`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -343,7 +344,7 @@ export default function OrganizerDashboard() {
           options: f.type === 'select' ? f.options.split(',').map(o => o.trim()).filter(Boolean) : []
         }));
       }
-      const response = await fetch('http://localhost:5000/events', {
+      const response = await fetch(`${API_URL}/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

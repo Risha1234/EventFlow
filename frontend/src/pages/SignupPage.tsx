@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui';
@@ -18,7 +19,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

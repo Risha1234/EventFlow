@@ -1,3 +1,4 @@
+import API_URL from "../utils/api";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Users, Shield, Calendar, UserCheck, TrendingUp } from 'lucide-react';
@@ -54,13 +55,13 @@ export default function AdminDashboard() {
 
       // Fetch all admin data in parallel
       const [usersRes, eventsRes, regsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/admin/users', {
+        fetch(`${API_URL}/api/admin/users`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        fetch('http://localhost:5000/api/admin/events', {
+        fetch(`${API_URL}/api/admin/events`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        fetch('http://localhost:5000/api/admin/registrations', {
+        fetch(`${API_URL}/api/admin/registrations`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
       ]);
