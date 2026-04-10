@@ -28,7 +28,7 @@ export default function DashboardOverview() {
   const [counts, setCounts] = useState({ events: 0, users: 0 });
   const [userRole, setUserRole] = useState('');
   const [userName, setUserName] = useState('');
-  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button, ShaderBackground } from '../components/ui';
 import {
   Zap, ChevronRight,
-  Sparkles, ArrowRight, Rocket, Gauge, Lock
+  Sparkles, Rocket, Gauge, Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

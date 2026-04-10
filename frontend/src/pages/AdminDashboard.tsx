@@ -290,7 +290,7 @@ export default function AdminDashboard() {
                     <Tooltip
                       contentStyle={{ backgroundColor: '#09090b', border: '1px solid #27272a', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
                       labelStyle={{ color: '#fafafa', fontWeight: 700, marginBottom: 4 }}
-                      formatter={(value: number) => [`${value}%`, 'Fill Rate']}
+                      formatter={(value: any) => [`${value}%`, 'Fill Rate']}
                       cursor={{ fill: 'rgba(139,92,246,0.06)' }}
                     />
                     <Bar dataKey="fill" radius={[6, 6, 0, 0]} maxBarSize={48}>

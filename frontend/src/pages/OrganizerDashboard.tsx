@@ -20,7 +20,6 @@ export default function OrganizerDashboard() {
   const [tickets, setTickets] = useState<{ name: string; price: number; quantity: number }[]>([]);
   const [formFields, setFormFields] = useState<{ label: string; type: 'text' | 'number' | 'select' | 'textarea'; required: boolean; options: string }[]>([]);
   const [createLoading, setCreateLoading] = useState(false);
-  const [chartData, setChartData] = useState<any[]>([]);
   const [activityFeed, setActivityFeed] = useState<any[]>([]);
   const activityFeedRef = useRef<HTMLDivElement>(null);
   const [expandedEventId, setExpandedEventId] = useState<number | null>(null);
@@ -34,7 +33,7 @@ export default function OrganizerDashboard() {
   useEffect(() => {
     fetchOrganizerEvents();
     fetchInitialActivity();
-  }, [events.length, chartData.length]);
+  }, [events.length]);
 
   useEffect(() => {
     if (events.length > 0 && !selectedTrendEventId) {
@@ -233,33 +232,7 @@ export default function OrganizerDashboard() {
     }
   };
 
-  const fetchTimeseriesData = async (eventId: number) => {
-    try {
-      const response = await fetch(`${API_URL}/api/organizer/events/${eventId}/analytics/timeseries`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
 
-      if (!response.ok) {
-        console.error('Failed to fetch timeseries data');
-        return;
-      }
-
-      const data = await response.json();
-      const formatted = data.map((item: any) => ({
-        time: item.time ? new Date(item.time).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        }) : '',
-        registrations: item.count
-      }));
-
-      setChartData(formatted);
-    } catch (err) {
-      console.error('Error fetching timeseries data:', err);
-    }
-  };
 
   const handleLogout = () => {
     // Clear all auth and app-related data from localStorage

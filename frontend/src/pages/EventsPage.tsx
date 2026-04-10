@@ -1,7 +1,7 @@
 import API_URL from "../utils/api";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, MoreVertical, Plus, X, Ticket, DollarSign, Trash2, FormInput, Search, Filter, XCircle, ChevronDown } from 'lucide-react';
+import { Calendar, MapPin, Plus, X, Ticket, DollarSign, Trash2, FormInput, Search, Filter, XCircle, ChevronDown } from 'lucide-react';
 import { Button, Badge, Card } from '../components/ui';
 import BackgroundEffects from '../components/ui/BackgroundEffects';
 import { jwtDecode } from 'jwt-decode';
