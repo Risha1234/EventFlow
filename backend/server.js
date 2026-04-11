@@ -499,27 +499,41 @@ app.get("/api/events/:id", authMiddleware, async (req, res) => {
 
 // REGISTER USER
 app.post("/register", async (req, res) => {
+  console.log("Register body:", req.body);
   try {
     const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: name, email, or password"
+      });
+    }
 
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, 'user') RETURNING *",
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
       [name, email, hashedPassword]
     );
 
     res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Register error:", error);
 
     // handle duplicate email nicely
-    if (err.code === "23505") {
-      return res.status(400).json({ error: "Email already exists" });
+    if (error.code === "23505") {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists"
+      });
     }
 
-    res.status(500).json({ error: "Error registering user" });
+    return res.status(500).json({
+      success: false,
+      message: "Error registering user"
+    });
   }
 });
 
