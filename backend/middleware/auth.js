@@ -8,7 +8,11 @@ const authMiddleware = (req, res, next) => {
       return res.status(401).json({ error: "No token provided" });
     }
 
-    const decoded = jwt.verify(token, "secretkey");
+    const secret = process.env.JWT_SECRET || "secretkey";
+    if (!process.env.JWT_SECRET) {
+      console.warn("⚠️  JWT_SECRET is missing. Using default fallback.");
+    }
+    const decoded = jwt.verify(token, secret);
 
     req.user = decoded;
     next();

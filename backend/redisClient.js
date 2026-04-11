@@ -3,22 +3,30 @@ require('dotenv').config();
 
 // Ensure we use the correct protocol for Upstash (prefer SSL/TLS)
 let url = process.env.REDIS_URL || '';
-if (url.startsWith('redis://')) {
-  // Optional: Automatically upgrade to rediss:// if needed, 
-  // but we'll stick to what the user provides to avoid port mismatches
-}
-const isSsl = url.startsWith('rediss://');
 
-const redisClient = createClient({
-  url: url,
-  socket: {
-    // Only apply TLS if the URL protocol is rediss://
-    ...(isSsl ? { tls: true, rejectUnauthorized: false } : {}),
-    // STEP 1: Disable internal auto-reconnect to prevent loops
-    // We will handle reconnection manually via ensureRedisConnection
-    reconnectStrategy: false
-  }
-});
+if (!url) {
+  console.warn("⚠️  REDIS_URL is NOT set. Caching will be disabled.");
+}
+
+const isSsl = url && url.startsWith('rediss://');
+
+const redisClient = url 
+  ? createClient({
+      url: url,
+      socket: {
+        // Only apply TLS if the URL protocol is rediss://
+        ...(isSsl ? { tls: true, rejectUnauthorized: false } : {}),
+        // Disable internal auto-reconnect to prevent loops
+        reconnectStrategy: false
+      }
+    })
+  : {
+      // Mock client or null if no URL
+      on: () => {},
+      connect: async () => {},
+      isOpen: false,
+      isMock: true
+    };
 
 let isConnecting = false;
 

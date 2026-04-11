@@ -14,6 +14,22 @@ const { authLimiter, activityLimiter, generalLimiter } = require("./middleware/r
 const app = express();
 require("dotenv").config();
 
+// ENV VALIDATION
+const REQUIRED_ENV = ["DATABASE_URL"];
+const RECOMMENDED_ENV = ["JWT_SECRET", "REDIS_URL", "OPENAI_API_KEY"];
+
+REQUIRED_ENV.forEach(name => {
+  if (!process.env[name]) {
+    console.error(`❌ CRITICAL: Missing required environment variable: ${name}`);
+  }
+});
+
+RECOMMENDED_ENV.forEach(name => {
+  if (!process.env[name]) {
+    console.warn(`⚠️  Warning: Missing recommended environment variable: ${name}`);
+  }
+});
+
 // Create HTTP server for Socket.IO
 const server = http.createServer(app);
 
@@ -197,7 +213,8 @@ app.get("/api/events/recommended", async (req, res) => {
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, "secretkey");
+        const secret = process.env.JWT_SECRET || "secretkey";
+        const decoded = jwt.verify(token, secret);
         userId = decoded.id;
         cacheKey = `recommended:user:${userId}`;
       } catch (err) {
@@ -520,9 +537,10 @@ app.put("/become-organizer", authMiddleware, async (req, res) => {
     const updatedUser = result.rows[0];
     console.log('User upgraded to organizer:', updatedUser);
     
+    const secret = process.env.JWT_SECRET || "secretkey";
     const token = jwt.sign(
       { id: updatedUser.id, email: updatedUser.email, role: updatedUser.role },
-      "secretkey",
+      secret,
       { expiresIn: "1h" }
     );
 
@@ -539,6 +557,10 @@ app.put("/become-organizer", authMiddleware, async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
 
     // check user exists
     const result = await pool.query(
@@ -560,16 +582,25 @@ app.post("/login", async (req, res) => {
     }
 
     // create token with role
+    const secret = process.env.JWT_SECRET || "secretkey";
+    if (!process.env.JWT_SECRET) {
+      console.warn("⚠️  JWT_SECRET is missing. Using fallback for login.");
+    }
+
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
-      "secretkey", // later move to .env
+      secret,
       { expiresIn: "1h" }
     );
 
     res.json({ token, role: user.role });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error logging in" });
+    console.error("Login route error:", err);
+    res.status(500).json({ 
+      success: false,
+      error: "Error logging in",
+      message: "Internal server error"
+    });
   }
 });
 // TRACK USER ACTIVITY
