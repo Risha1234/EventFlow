@@ -114,7 +114,7 @@ export default function LandingPage() {
             ) : (
               <>
                 <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>Log in</Button>
-                <Button size="sm" className="shadow-primary-500/20 shadow-lg" onClick={() => navigate('/signup')}>
+                <Button size="sm" className="shadow-primary-500/20 shadow-lg" onClick={() => navigate('/register')}>
                   Get Started
                 </Button>
               </>
@@ -435,7 +435,7 @@ export default function LandingPage() {
               <Button
                 size="lg"
                 className="h-16 px-12 text-lg font-bold shadow-2xl shadow-primary-500/40 hover:shadow-3xl hover:shadow-primary-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate('/register')}
               >
                 Get Started Now
               </Button>

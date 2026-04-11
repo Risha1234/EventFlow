@@ -514,7 +514,7 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, role",
       [name, email, hashedPassword]
     );
 
@@ -564,9 +564,6 @@ app.put("/become-organizer", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Error upgrading to organizer" });
   }
 });
-
-
-
 // LOGIN USER
 app.post("/login", async (req, res) => {
   try {
@@ -582,17 +579,18 @@ app.post("/login", async (req, res) => {
       [email]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(400).json({ error: "User not found" });
-    }
-
     const user = result.rows[0];
+    console.log("User from DB:", user);
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
 
     // compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid password" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     // create token with role
@@ -604,17 +602,13 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       secret,
-      { expiresIn: "1h" }
+      { expiresIn: "10h" }
     );
 
     res.json({ token, role: user.role });
-  } catch (err) {
-    console.error("Login route error:", err);
-    res.status(500).json({ 
-      success: false,
-      error: "Error logging in",
-      message: "Internal server error"
-    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 // TRACK USER ACTIVITY
