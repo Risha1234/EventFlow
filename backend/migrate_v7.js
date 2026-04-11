@@ -1,17 +1,9 @@
 const { Pool } = require('pg');
 
-const pool = process.env.DATABASE_URL 
-  ? new Pool({ 
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }
-    })
-  : new Pool({
-      user: 'postgres',
-      host: 'localhost',
-      database: 'eventflow_db',
-      password: 'risha',
-      port: 5432,
-    });
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 async function migrate() {
   try {
