@@ -1,4 +1,15 @@
+require("dotenv").config();
 const express = require("express");
+
+// GLOBAL ERROR HANDLERS TO PREVENT CRASHES
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception thrown:', err);
+});
+
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -12,7 +23,6 @@ const { redisClient } = require("./redisClient");
 const { getCache, setCache, deleteCache } = require("./utils/cache");
 const { authLimiter, activityLimiter, generalLimiter } = require("./middleware/rateLimiter");
 const app = express();
-require("dotenv").config();
 
 // ENV VALIDATION
 const REQUIRED_ENV = ["DATABASE_URL"];
@@ -499,14 +509,14 @@ app.get("/api/events/:id", authMiddleware, async (req, res) => {
 
 // REGISTER USER
 app.post("/register", async (req, res) => {
-  console.log("Register body:", req.body);
   try {
     const { name, email, password } = req.body;
+    console.log(`Registration attempt for: ${email}`);
 
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: name, email, or password"
+        error: "Missing required fields: name, email, or password"
       });
     }
 
@@ -518,6 +528,7 @@ app.post("/register", async (req, res) => {
       [name, email, hashedPassword]
     );
 
+    console.log(`User registered successfully: ${email}`);
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Register error:", error);
@@ -526,13 +537,13 @@ app.post("/register", async (req, res) => {
     if (error.code === "23505") {
       return res.status(400).json({
         success: false,
-        message: "Email already exists"
+        error: "Email already exists"
       });
     }
 
     return res.status(500).json({
       success: false,
-      message: "Error registering user"
+      error: "Error registering user"
     });
   }
 });
@@ -568,6 +579,7 @@ app.put("/become-organizer", authMiddleware, async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(`Login attempt for: ${email}`);
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
@@ -580,32 +592,40 @@ app.post("/login", async (req, res) => {
     );
 
     const user = result.rows[0];
-    console.log("User from DB:", user);
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      console.log(`Login failed: User not found (${email})`);
+      return res.status(400).json({ error: "User not found" });
     }
 
     // compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      console.log(`Login failed: Invalid password (${email})`);
+      return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    // create token with role
+    // create token with role and name
     const secret = process.env.JWT_SECRET || "secretkey";
-    if (!process.env.JWT_SECRET) {
-      console.warn("⚠️  JWT_SECRET is missing. Using fallback for login.");
-    }
-
+    
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: user.role, name: user.name },
       secret,
       { expiresIn: "10h" }
     );
 
-    res.json({ token, role: user.role });
+    console.log(`Login successful for: ${email}`);
+    res.json({ 
+      token, 
+      role: user.role,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Internal server error" });

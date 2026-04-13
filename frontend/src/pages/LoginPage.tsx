@@ -31,6 +31,10 @@ export default function LoginPage() {
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
         console.log('Login successful', { token: data.token, role: data.role });
         
         // Handle intent-based redirection
